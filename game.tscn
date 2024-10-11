@@ -1,0 +1,134 @@
+[gd_scene load_steps=16 format=3 uid="uid://cmyhhptbj8o8m"]
+
+[ext_resource type="Script" path="res://game.gd" id="1_dfkmk"]
+[ext_resource type="Texture2D" uid="uid://cg4pig2jby8su" path="res://assets/background.png" id="1_focgx"]
+[ext_resource type="Texture2D" uid="uid://dcy4p004wispn" path="res://assets/bird_flying.png" id="2_e8i72"]
+[ext_resource type="Script" path="res://Background.gd" id="2_fa4fy"]
+[ext_resource type="Script" path="res://Bird.gd" id="3_ugkaj"]
+[ext_resource type="Texture2D" uid="uid://chn6wea5yfkxk" path="res://assets/get_ready.png" id="6_wciyi"]
+[ext_resource type="Texture2D" uid="uid://obe7mtfd7qed" path="res://assets/taptap.png" id="7_lcthr"]
+[ext_resource type="Texture2D" uid="uid://b81d5568fg4l4" path="res://assets/game_over.png" id="8_20bxt"]
+[ext_resource type="PackedScene" uid="uid://dv6src52p12gg" path="res://tubes.tscn" id="9_qg31m"]
+[ext_resource type="FontFile" uid="uid://u3ylu0no38o1" path="res://assets/8bit_wonder/8-BIT WONDER.TTF" id="10_o6f5s"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cnbui"]
+atlas = ExtResource("2_e8i72")
+region = Rect2(18, 0, 18, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k7gw2"]
+atlas = ExtResource("2_e8i72")
+region = Rect2(36, 0, 18, 12)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xrqua"]
+atlas = ExtResource("2_e8i72")
+region = Rect2(0, 0, 18, 12)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qhthv"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cnbui")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k7gw2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cnbui")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xrqua")
+}],
+"loop": false,
+"name": &"flap",
+"speed": 10.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_g7mkp"]
+radius = 4.0
+
+[node name="Game" type="Node2D"]
+process_mode = 3
+texture_filter = 1
+script = ExtResource("1_dfkmk")
+
+[node name="Background" type="Sprite2D" parent="."]
+process_mode = 1
+texture = ExtResource("1_focgx")
+centered = false
+script = ExtResource("2_fa4fy")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+zoom = Vector2(3, 3)
+
+[node name="Bird" type="Area2D" parent="."]
+process_mode = 1
+position = Vector2(32, 150)
+script = ExtResource("3_ugkaj")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Bird"]
+sprite_frames = SubResource("SpriteFrames_qhthv")
+animation = &"flap"
+frame = 3
+frame_progress = 1.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Bird"]
+shape = SubResource("CircleShape2D_g7mkp")
+
+[node name="Tubes1" parent="." instance=ExtResource("9_qg31m")]
+process_mode = 1
+position = Vector2(216, 128)
+
+[node name="Tubes2" parent="." instance=ExtResource("9_qg31m")]
+process_mode = 1
+position = Vector2(360, 128)
+
+[node name="StartScreen" type="Node2D" parent="."]
+
+[node name="GetReady" type="Sprite2D" parent="StartScreen"]
+position = Vector2(72, 100)
+texture = ExtResource("6_wciyi")
+
+[node name="Taptap" type="Sprite2D" parent="StartScreen"]
+position = Vector2(72, 200)
+texture = ExtResource("7_lcthr")
+
+[node name="Timer" type="Timer" parent="StartScreen"]
+wait_time = 2.0
+one_shot = true
+autostart = true
+
+[node name="GameOver" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(72, 100)
+texture = ExtResource("8_20bxt")
+
+[node name="Timer" type="Timer" parent="GameOver"]
+wait_time = 2.0
+one_shot = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 8.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 12
+theme_override_fonts/font = ExtResource("10_o6f5s")
+theme_override_font_sizes/font_size = 54
+text = "
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="area_entered" from="Bird" to="Bird" method="_on_area_entered"]
+[connection signal="game_over" from="Bird" to="." method="game_over"]
+[connection signal="tubes_passed_player" from="Tubes1" to="." method="increase_score"]
+[connection signal="tubes_passed_player" from="Tubes2" to="." method="increase_score"]
+[connection signal="timeout" from="StartScreen/Timer" to="." method="start_game"]
+[connection signal="timeout" from="GameOver/Timer" to="." method="restart_game"]

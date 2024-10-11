@@ -1,2 +1,3 @@
-# flappy_bird
-Flappy bird created in Godot
+# Flappy Bird
+
+This is the code for the Godot Flappy Bird tutorial.

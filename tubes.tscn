@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://dv6src52p12gg"]
+
+[ext_resource type="Texture2D" uid="uid://v3gybfottwio" path="res://assets/tube_bottom.png" id="1_mqsgd"]
+[ext_resource type="Script" path="res://tubes.gd" id="1_y07ip"]
+[ext_resource type="Texture2D" uid="uid://x08w1ndkjsq" path="res://assets/tube_top.png" id="2_k65af"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_imtv7"]
+size = Vector2(24, 358)
+
+[node name="Tubes" type="Area2D"]
+script = ExtResource("1_y07ip")
+
+[node name="CollisionShapeTop" type="CollisionShape2D" parent="."]
+position = Vector2(0, -250)
+shape = SubResource("RectangleShape2D_imtv7")
+
+[node name="TubeTop" type="Sprite2D" parent="CollisionShapeTop"]
+position = Vector2(0, 100)
+texture = ExtResource("2_k65af")
+
+[node name="CollisionShapeBottom" type="CollisionShape2D" parent="."]
+position = Vector2(0, 250)
+shape = SubResource("RectangleShape2D_imtv7")
+
+[node name="TubeBottom" type="Sprite2D" parent="CollisionShapeBottom"]
+position = Vector2(0, -100)
+texture = ExtResource("1_mqsgd")
